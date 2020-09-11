@@ -10,6 +10,7 @@ Arduino에서 SerailPort로 전송한 데이터를 LiveChart에 표시, Simulati
 ### 사용 기술
 - C# WPF Mvvm
 - MahApps.Metro https://mahapps.com/
+- LiveCharts https://lvcharts.net/ 
 - SerialCommunication
 - Async / Await 비동기 프로그래밍
 - lock 키워드를 활용한 임계영역 관리
