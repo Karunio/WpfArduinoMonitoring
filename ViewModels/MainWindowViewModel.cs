@@ -4,6 +4,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO.Ports;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using WpfMonitoring.Core;
@@ -16,6 +17,7 @@ namespace WpfMonitoring.ViewModels
     {
         #region Readonly Values
         public double ZoomInterval { get => 5; }
+        private object SerialLock = new object();
         #endregion
 
         #region RelayCommands
@@ -91,7 +93,7 @@ namespace WpfMonitoring.ViewModels
             {
                 if (connectCommand == null)
                 {
-                    connectCommand = new RelayCommand(Connect, CanConnect);
+                    connectCommand = new RelayCommand(async (o) => await Connect(o), CanConnect);
                 }
                 return connectCommand;
             }
@@ -104,7 +106,7 @@ namespace WpfMonitoring.ViewModels
             {
                 if (disconnectCommand == null)
                 {
-                    disconnectCommand = new RelayCommand(Disconnect, CanDisconnect);
+                    disconnectCommand = new RelayCommand(async (o) => await Disconnect(o), CanDisconnect);
                 }
                 return disconnectCommand;
             }
@@ -345,12 +347,12 @@ namespace WpfMonitoring.ViewModels
         #endregion
 
         #region Serial Related Method
-        private void Connect(object obj)
+        private async Task Connect(object obj)
         {
             DataListsClear();
             Serial.PortName = Port;
             Serial.BaudRate = SensorData.BaudRate;
-            Serial.Open();
+            await Task.Run(() => Serial.Open());
             ConnectTime = DateTime.Now;
         }
 
@@ -366,9 +368,9 @@ namespace WpfMonitoring.ViewModels
             return true;
         }
 
-        private void Disconnect(object obj)
+        private async Task Disconnect(object obj)
         {
-            Serial.Close();
+            await Task.Run(() => Serial.Close());
         }
 
         private bool CanDisconnect(object obj)
@@ -384,9 +386,17 @@ namespace WpfMonitoring.ViewModels
             }
         }
 
-        private void SerialDataReceived(object sender, SerialDataReceivedEventArgs e)
+        private async void SerialDataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            string data = Serial.ReadLine();
+            string data = await Task.Run(() =>
+            {
+                string receivedData;
+                lock (SerialLock)
+                {
+                    receivedData = Serial.ReadLine();
+                }
+                return receivedData;
+            });
 
             try
             {
