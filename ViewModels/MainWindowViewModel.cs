@@ -277,6 +277,7 @@ namespace WpfMonitoring.ViewModels
         private void OepnInformation(object obj)
         {
             InformationView informationView = new InformationView();
+            informationView.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             informationView.ShowDialog();
         }
 
