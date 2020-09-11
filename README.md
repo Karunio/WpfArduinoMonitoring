@@ -7,6 +7,13 @@ Arduino에서 SerailPort로 전송한 데이터를 LiveChart에 표시, Simulati
 - 최신데이터 5개를 보여주는 Zoom기능과 전체 데이터를 확인할수있는 ViewAll기능을 제공한다.
 - 들어온 데이터와 에러를 기록하는 Log창을 제공한다.
 
+### 사용 기술
+- C# WPF Mvvm
+- MahApps.Metro https://mahapps.com/
+- SerialCommunication
+- Async / Await 비동기 프로그래밍
+- lock 키워드를 활용한 임계영역 관리
+
 ## 메인화면
 ![메인화면](READMESrc/Main.png)
 
